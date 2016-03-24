@@ -1,0 +1,490 @@
+
+ <!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Merge sort | HsiHo Huang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="HsiHo Huang">
+    
+
+    
+    <meta name="description" content="複習Merge sort排序演算法的學習筆記，本篇文章會持續更新。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Merge sort">
+<meta property="og:url" content="http://blog.hsihohuang.info/2016/03/02/2016-2016-03-02-Mergesort/index.html">
+<meta property="og:site_name" content="HsiHo Huang">
+<meta property="og:description" content="複習Merge sort排序演算法的學習筆記，本篇文章會持續更新。">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/c/cc/Merge-sort-example-300px.gif">
+<meta property="og:updated_time" content="2016-03-18T09:41:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Merge sort">
+<meta name="twitter:description" content="複習Merge sort排序演算法的學習筆記，本篇文章會持續更新。">
+<meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/c/cc/Merge-sort-example-300px.gif">
+
+    
+    <link rel="alternative" href="atom.xml" title="HsiHo Huang" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/unnamed4_n_mSY_icon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/profile.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/profile.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HsiHo Huang" title="HsiHo Huang"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HsiHo Huang">HsiHo Huang</a></h1>
+				<h2 class="blog-motto">Never stop learning, because life never stops teaching.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="Search" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/02/2016-2016-03-02-Mergesort/" title="Merge sort" itemprop="url">Merge sort</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="HsiHo Huang" target="_blank" itemprop="author">HsiHo Huang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-02T13:58:28.000Z" itemprop="datePublished"> Published 2016-03-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#時間複雜度"><span class="toc-number">2.</span> <span class="toc-text">時間複雜度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#空間複雜度"><span class="toc-number">3.</span> <span class="toc-text">空間複雜度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#穩定性"><span class="toc-number">4.</span> <span class="toc-text">穩定性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Code"><span class="toc-number">5.</span> <span class="toc-text">Code</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>將數列一直對半切割, 切到最小單位(單一元素), 再左右合併回去, 合併的同時做排序(如以下的動畫)。<br>和Quicksort一樣是divide &amp; conquer的概念, 但不同的是Merge sort都是對半切割,而Quicksort是依據所選的pivot值分成兩堆(大於pivot的放一堆，小於的放一堆)。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Merge-sort-example-300px.gif" width="300"><br><a href="https://en.wikipedia.org/wiki/Merge_sort#/media/File:Merge-sort-example-300px.gif" target="_blank" rel="external">(File from Merge sort wiki, CC BY-SA 3.0)</a></p>
+<h2 id="時間複雜度"><a href="#時間複雜度" class="headerlink" title="時間複雜度"></a>時間複雜度</h2><p>每次合併都是O(n)，而每次遞迴呼叫都是處理數列的一半O(log<sub>2</sub> n)，所以總共是O(nlog n)。</p>
+<p>Best : O(nlog n)<br>Average : O(nlog n)<br>Worst : O(nlog n)</p>
+<h2 id="空間複雜度"><a href="#空間複雜度" class="headerlink" title="空間複雜度"></a>空間複雜度</h2><p>O(n)</p>
+<h2 id="穩定性"><a href="#穩定性" class="headerlink" title="穩定性"></a>穩定性</h2><p>穩定</p>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><p><strong>See my code on <u><a href="https://github.com/hsihohuang/Algorithms/blob/master/Sorting/Mergesort.java" target="_blank" rel="external">github</a></u></strong>.</p>
+<script src="https://gist.github.com/hsihohuang/6e0531abf40a180fdb22.js"></script>
+
+<p>參考資料：<br><u><a href="https://en.wikipedia.org/wiki/Merge_sort" target="_blank" rel="external">Mergesort wiki</a></u><br><u><a href="https://en.wikipedia.org/wiki/Sorting_algorithm" target="_blank" rel="external">Sorting algorithm wiki</a></u></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Computer-Science/">Computer Science</a>►<a class="article-category-link" href="/categories/Computer-Science/Programming-程式設計/">Programming | 程式設計</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Sorting-排序/">Sorting | 排序</a><a href="/tags/Algorithm-演算法/">Algorithm | 演算法</a>
+  </div>
+
+</div>
+
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/03/06/2016-2016-03-06-更改Jaman主題樣式/" title="更改Hexo主題樣式Jaman">
+  <span>
+  更改Hexo主題樣式Jaman</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/02/29/2016-2016-02-29-Quicksort/"  title="Quicksort">
+ <span>Quicksort
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-img"></div>		
+	
+	<div class="social-info" class="clearfix">
+		
+		
+		<a href="https://github.com/hsihohuang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://hsihohuang.tumblr.com" target="_blank" class="icon-tumblr" title="Tumblr"></a>
+		
+		
+		<a href="mailto:hsihohuang@hotmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+
+	</div>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Computer-Science/" title="Computer Science">Computer Science<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Computer-Science/Programming-程式設計/" title="Programming | 程式設計">Programming | 程式設計<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Computer-Science/Web/" title="Web">Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Computer-Science/活動/" title="活動">活動<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Algorithm-演算法/" title="Algorithm | 演算法">Algorithm | 演算法<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Sorting-排序/" title="Sorting | 排序">Sorting | 排序<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kiddochan/" title="Kiddochan">Kiddochan<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Scrum/" title="Scrum">Scrum<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Search-搜尋/" title="Search | 搜尋">Search | 搜尋<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+		
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/hsihohuang/kiddochan" target="_blank" title="Kiddochan">Kiddochan</a> © 2016 
+		
+		<a href="/about" target="_blank" title="HsiHo Huang">HsiHo Huang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'hsihohuang';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-72527374-4', 'blog.hsihohuang.info');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
